@@ -1,5 +1,5 @@
 {
-  "name": "authentiction-express",
+  "name": "authentication-express",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OrhunTokdemir/authentiction-express.js.git"
+    "url": "git+https://github.com/OrhunTokdemir/authentication-express.js.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/OrhunTokdemir/authentiction-express.js/issues"
+    "url": "https://github.com/OrhunTokdemir/authentication-express.js/issues"
   },
-  "homepage": "https://github.com/OrhunTokdemir/authentiction-express.js#readme",
+  "homepage": "https://github.com/OrhunTokdemir/authentication-express.js#readme",
   "dependencies": {
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
