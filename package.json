@@ -1,0 +1,28 @@
+{
+  "name": "authentiction-express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OrhunTokdemir/authentiction-express.js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OrhunTokdemir/authentiction-express.js/issues"
+  },
+  "homepage": "https://github.com/OrhunTokdemir/authentiction-express.js#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "pg": "^8.16.3"
+    
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
