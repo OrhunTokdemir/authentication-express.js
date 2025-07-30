@@ -1,6 +1,7 @@
 const express = require('express')
 const { setupDatabase, pool } = require('./db');
-const { insertUserToDb, checkUsernameAndEmail } = require('./dbMethods');
+const { insertUserToDb, checkUsernameAndEmail, checkForLogin } = require('./dbMethods');
+const { generateToken, verifyToken } = require('./jwt');
 const app = express()
 const port = 3000
 
@@ -9,23 +10,37 @@ setupDatabase(pool).then(() => {
 });
 
 app.use(express.json())
-var user={
-    username: 'admin',
-    password: 'password'
-}
+//var user={
+//    username: 'admin',
+//    password: 'password'
+//}
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     const {username, password} = req.body;
     if (username==null || password==null) {
         return res.status(400).send('Username and password are required!');
     }
-    if(username !== user.username || password !== user.password) {
-        return res.status(401).send('Invalid username or password');
+    try {
+        const user = await checkForLogin(pool, username, password);
+        if (!user) {
+            return res.status(401).send('Invalid username or password');
+        }
+        // Generate JWT token
+        const payload = { 
+            id: user.id,
+            username: user.username,
+            role: "user",
+        };
+        const token = await generateToken(payload);
+        res.status(200).json({
+            message: `Login successful. Welcome ${user.username}!`,
+            token: token
+        });
+    } catch (err) {
+        console.error('Error during login:', err);
+        res.status(500).send('Internal server error');
     }
-
-    res.status(200).send('Login successful');
-})
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+});
 
 app.post('/register', async (req, res) => {
     const {username, email, password}=req.body;
@@ -74,7 +89,7 @@ app.post('/register-admin', async (req, res) => {
             return res.status(409).send('Email already exists');
         }
 
-        const newUser = await insertUserToDb(pool, username, email, password);
+        const newUser = await insertUserToDb(pool, username, email, password, 'admin');
         console.log('New user registered:', newUser);
         return res.status(201).send('User registered successfully');
     } catch (error) {
@@ -83,3 +98,4 @@ app.post('/register-admin', async (req, res) => {
     }
     
 });
+app.listen(port, () => console.log(`Example app listening on port ${port}!`))

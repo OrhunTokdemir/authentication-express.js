@@ -1,8 +1,8 @@
-async function insertUserToDb(pool, username, email, password) {
+async function insertUserToDb(pool, username, email, password, role = 'user') {
     const client = await pool.connect();
     try {
-        const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *';
-        const values = [username, email, password];
+        const query = 'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *';
+        const values = [username, email, password, role];
         const res = await client.query(query, values);
         return res.rows[0];
     } catch (error) {
@@ -47,7 +47,29 @@ async function checkUsernameAndEmail(pool, username, email) {
         client.release();
     }
 }
+async function checkForLogin(pool, username, password){
+    const client = await pool.connect();
+    try {
+        const query = 'SELECT * FROM users WHERE username = $1';
+        const values = [username];
+        const res = await client.query(query, values);
+        if (res.rows.length === 0) {
+            return null; // No user found
+        }
+        const user = res.rows[0];
+        if (user.password === password) {
+            return user;
+        }
+        return null; // Password does not match
+    } catch (error) {
+        console.error('Error checking login:', error);
+        throw error;
+    } finally {
+        client.release();
+    }
+}
 module.exports = {
     insertUserToDb,
-    checkUsernameAndEmail
+    checkUsernameAndEmail,
+    checkForLogin
 };

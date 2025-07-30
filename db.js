@@ -18,8 +18,11 @@ async function setupDatabase(pool) {
         username VARCHAR(100) NOT NULL,
         email VARCHAR(100) NOT NULL,
         password VARCHAR(100) NOT NULL,
+        ROLE VARCHAR(20) DEFAULT 'user',
         CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(username, email)
+        Constraint unique_username UNIQUE (username),
+        Constraint unique_email UNIQUE (email)
+      
       )
     `);
     console.log('Database setup complete');
