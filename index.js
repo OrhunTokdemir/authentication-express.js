@@ -29,7 +29,7 @@ app.post('/login', async (req, res) => {
         const payload = { 
             id: user.id,
             username: user.username,
-            role: "user",
+            role: user.role
         };
         const token = await generateToken(payload);
         res.status(200).json({
@@ -124,7 +124,34 @@ app.post('/register-admin', async (req, res) => {
     } catch (error) {
         console.error('Error registering superadmin:', error);
         res.status(500).send('Internal server error');
+    }  
+});
+
+app.post('/secret-route', async (req, res) => {
+    const { token } = req.body;
+    if (!token) {
+        return res.status(401).send('Unauthorized');
     }
-    
+
+    const decoded = await verifyToken(token);
+    if (decoded.role !== 'admin' && decoded.role !== 'superadmin') {
+        return res.status(403).send('Forbidden');
+    }
+
+    res.send('This is a secret route');
+});
+
+app.post('/super-secret-route', async (req, res) => {
+    const { token } = req.body;
+    if (!token) {
+        return res.status(401).send('Unauthorized');
+    }
+
+    const decoded = await verifyToken(token);
+    if (decoded.role !== 'superadmin') {
+        return res.status(403).send('Forbidden');
+    }
+
+    res.send('This is a super secret route');
 });
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

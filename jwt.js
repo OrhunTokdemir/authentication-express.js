@@ -14,8 +14,9 @@ async function verifyToken(token) {
     } catch (err) {
         console.error('Error verifying JWT:', err);
         return null;
-    }
+    }    
 }
+
 module.exports = {
     generateToken,
     verifyToken
