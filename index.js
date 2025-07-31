@@ -62,8 +62,8 @@ app.post('/register', async (req, res) => {
             return res.status(409).send('Email already exists');
         }
 
-        const newUser = await insertUserToDb(pool, username, email, password, hashPassword);
-        console.log('New user registered:', newUser);
+        const newUser = await insertUserToDb(pool, username, email, password, 'user', hashPassword);
+        console.log('New user registered:', newUser.username);
         return res.status(201).send('User registered successfully');
     } catch (error) {
         console.error('Error registering user:', error);
@@ -93,7 +93,7 @@ app.post('/register-admin', async (req, res) => {
         }
 
         const newUser = await insertUserToDb(pool, username, email, password, 'admin', hashPassword);
-        console.log('New admin registered:', newUser);
+        console.log('New admin registered:', newUser.username);
         return res.status(201).send('Admin registered successfully');
     } catch (error) {
         console.error('Error registering admin:', error);
@@ -122,7 +122,7 @@ app.post('/register-admin', async (req, res) => {
         }
 
         const newUser = await insertUserToDb(pool, username, email, password, 'superadmin', hashPassword);
-        console.log('New superadmin registered:', newUser);
+        console.log('New superadmin registered:', newUser.username);
         return res.status(201).send('User registered successfully');
     } catch (error) {
         console.error('Error registering superadmin:', error);
