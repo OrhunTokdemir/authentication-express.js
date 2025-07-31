@@ -1,7 +1,10 @@
 const express = require('express')
 const { setupDatabase, pool } = require('./db');
 const { insertUserToDb, checkUsernameAndEmail, checkForLogin } = require('./dbMethods');
-const { generateToken, verifyToken } = require('./jwt');
+const { generateToken, verifyToken } = require('./authUtils');
+const { hashPassword, comparePassword } = require('./authUtils');
+
+
 const app = express()
 const port = 3000
 
@@ -21,7 +24,7 @@ app.post('/login', async (req, res) => {
         return res.status(400).send('Username and password are required!');
     }
     try {
-        const user = await checkForLogin(pool, username, password);
+        const user = await checkForLogin(pool, username, password, comparePassword);
         if (!user) {
             return res.status(401).send('Invalid username or password');
         }
@@ -59,7 +62,7 @@ app.post('/register', async (req, res) => {
             return res.status(409).send('Email already exists');
         }
 
-        const newUser = await insertUserToDb(pool, username, email, password);
+        const newUser = await insertUserToDb(pool, username, email, password, hashPassword);
         console.log('New user registered:', newUser);
         return res.status(201).send('User registered successfully');
     } catch (error) {
@@ -89,7 +92,7 @@ app.post('/register-admin', async (req, res) => {
             return res.status(409).send('Email already exists');
         }
 
-        const newUser = await insertUserToDb(pool, username, email, password, 'admin');
+        const newUser = await insertUserToDb(pool, username, email, password, 'admin', hashPassword);
         console.log('New admin registered:', newUser);
         return res.status(201).send('Admin registered successfully');
     } catch (error) {
@@ -118,7 +121,7 @@ app.post('/register-admin', async (req, res) => {
             return res.status(409).send('Email already exists');
         }
 
-        const newUser = await insertUserToDb(pool, username, email, password, 'superadmin');
+        const newUser = await insertUserToDb(pool, username, email, password, 'superadmin', hashPassword);
         console.log('New superadmin registered:', newUser);
         return res.status(201).send('User registered successfully');
     } catch (error) {

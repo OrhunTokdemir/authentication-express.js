@@ -1,8 +1,10 @@
-async function insertUserToDb(pool, username, email, password, role = 'user') {
+
+async function insertUserToDb(pool, username, email, password, role = 'user',hashingCallback) {
     const client = await pool.connect();
     try {
+        const hashedPassword = await hashingCallback(password);
         const query = 'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *';
-        const values = [username, email, password, role];
+        const values = [username, email, hashedPassword, role];
         const res = await client.query(query, values);
         return res.rows[0];
     } catch (error) {
@@ -47,7 +49,7 @@ async function checkUsernameAndEmail(pool, username, email) {
         client.release();
     }
 }
-async function checkForLogin(pool, username, password){
+async function checkForLogin(pool, username, password, comparePasswordCallback) {
     const client = await pool.connect();
     try {
         const query = 'SELECT * FROM users WHERE username = $1';
@@ -57,7 +59,7 @@ async function checkForLogin(pool, username, password){
             return null; // No user found
         }
         const user = res.rows[0];
-        if (user.password === password) {
+        if (await comparePasswordCallback(password, user.password)) {
             return user;
         }
         return null; // Password does not match

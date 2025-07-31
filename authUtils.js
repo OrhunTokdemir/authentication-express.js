@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 async function generateToken(payload, duration = '1h') {
@@ -17,7 +18,20 @@ async function verifyToken(token) {
     }    
 }
 
+
+async function hashPassword(password) {
+    const saltRounds = 10;
+    return await bcrypt.hash(password, saltRounds);
+}
+
+async function comparePassword(plainPassword, hashedPassword) {
+    return await bcrypt.compare(plainPassword, hashedPassword);
+}
+
+
 module.exports = {
     generateToken,
-    verifyToken
-}; 
+    verifyToken,
+    hashPassword,
+    comparePassword
+};
