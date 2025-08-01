@@ -28,4 +28,4 @@ app.use('/register-superadmin', registerSuperAdminRoutes);
 app.use('/secret-route', secretRoute);
 app.use('/super-secret-route', superSecretRoute);
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`App is listening on port ${port}!`));
