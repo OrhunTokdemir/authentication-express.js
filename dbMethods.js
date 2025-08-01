@@ -1,5 +1,5 @@
 
-async function insertUserToDb(pool, username, email, password, role = 'user',hashingCallback) {
+async function insertUserToDb(pool, username, email, password, role = 'user', hashingCallback) {
     const client = await pool.connect();
     try {
         const hashedPassword = await hashingCallback(password);
